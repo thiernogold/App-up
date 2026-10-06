@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Magasin Elhadje Abdoul Wahab — Gestion de stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR (desktop) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">EAW</span>
+      <div class="brand-text">
+        <strong>Magasin Elhadje<br>Abdoul Wahab</strong>
+        <small>Gestion de stock</small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z" fill="currentColor"/></svg>
+        <span>Tableau de bord</span>
+      </button>
+      <button class="nav-item" data-view="products">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 7l1.5-3h15L21 7M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18M9 11a3 3 0 006 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Produits</span>
+      </button>
+      <button class="nav-item" data-view="sales">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19v-7M20 19V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Ventes</span>
+      </button>
+      <button class="nav-item" data-view="benefits">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8M21 7h-5M21 7v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Bénéfices</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="viewTitle">Tableau de bord</h1>
+        <p id="viewSubtitle">Vue d'ensemble de votre activité</p>
+      </div>
+      <div class="clock">
+        <span id="clockDate"></span>
+        <span id="clockTime"></span>
+      </div>
+    </header>
+
+    <!-- DASHBOARD VIEW -->
+    <section class="view active" id="view-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Produits en stock</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M3 7l1.5-3h15L21 7M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+          <span class="stat-value" id="statProductCount">0</span>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-top">
+            <span class="stat-label">Ventes aujourd'hui</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19v-7M20 19V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+          <span class="stat-value" id="statTodaySales">0 FG</span>
+          <svg class="sparkline" id="sparkline" viewBox="0 0 100 28" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-label">Ventes ce mois-ci</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 7V3M16 7V3M3.5 10h17M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+          <span class="stat-value" id="statMonthSales">0 FG</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Stock faible</h2>
+          <small>Produits à 5 unités ou moins</small>
+        </div>
+        <div id="lowStockList" class="low-stock-list"></div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS VIEW -->
+    <section class="view" id="view-products">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un produit disponible…">
+        </div>
+        <button class="btn btn-primary btn-desktop-only" id="openAddProduct">+ Ajouter un produit</button>
+      </div>
+
+      <div class="chip-row" id="filterChips">
+        <button class="chip active" data-filter="all">Tous</button>
+        <button class="chip" data-filter="low">Stock faible</button>
+        <button class="chip" data-filter="out">Rupture</button>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+      <div class="empty-state" id="productsEmpty" hidden>
+        <svg viewBox="0 0 64 64" fill="none" class="empty-illustration"><rect x="10" y="24" width="44" height="30" rx="4" stroke="currentColor" stroke-width="2"/><path d="M10 24l6-12h32l6 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 24h44" stroke="currentColor" stroke-width="2"/><path d="M26 32v8M38 32v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>Aucun produit pour le moment.</p>
+        <span>Touchez « Ajouter un produit » pour commencer votre inventaire.</span>
+      </div>
+    </section>
+
+    <!-- SALES VIEW -->
+    <section class="view" id="view-sales">
+      <div class="sales-controls">
+        <label for="monthSelect">Mois</label>
+        <select id="monthSelect"></select>
+        <div class="sales-mini-stats">
+          <div><small>Total du mois</small><strong id="monthTotal">0 FG</strong></div>
+          <div><small>Bénéfice du mois</small><strong id="monthProfit">0 FG</strong></div>
+          <div><small>Articles vendus</small><strong id="monthUnits">0</strong></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Détail par jour</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Ventes</th><th>Articles</th><th>Chiffre d'affaires</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody id="dailySalesBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="salesEmpty" hidden>
+          <p>Aucune vente enregistrée pour ce mois.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Ventes détaillées</h2>
+          <small>Produit, quantité et bénéfice par vente</small>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Produit</th><th>Quantité</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody id="detailedSalesBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="detailedSalesEmpty" hidden>
+          <p>Aucune vente détaillée pour ce mois.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS VIEW -->
+    <section class="view" id="view-benefits">
+      <div class="stat-grid">
+        <div class="stat-card accent">
+          <div class="stat-top"><span class="stat-label">Bénéfice aujourd'hui</span></div>
+          <span class="stat-value" id="statTodayProfit">0 FG</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><span class="stat-label">Bénéfice du mois sélectionné</span></div>
+          <span class="stat-value" id="statSelectedMonthProfit">0 FG</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><span class="stat-label">Bénéfice total (depuis le début)</span></div>
+          <span class="stat-value" id="statTotalProfit">0 FG</span>
+        </div>
+      </div>
+
+      <div class="sales-controls">
+        <label for="benefitsMonthSelect">Mois</label>
+        <select id="benefitsMonthSelect"></select>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Bénéfices par jour</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Ventes</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody id="benefitsDailyBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="benefitsEmpty" hidden>
+          <p>Aucun bénéfice enregistré pour ce mois.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FAB (mobile quick add) -->
+  <button class="fab" id="fabAdd" aria-label="Ajouter un produit">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+  </button>
+
+  <!-- BOTTOM TAB BAR (mobile) -->
+  <nav class="bottom-tabs">
+    <button class="nav-item active" data-view="dashboard">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z" fill="currentColor"/></svg>
+      <span>Accueil</span>
+    </button>
+    <button class="nav-item" data-view="products">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 7l1.5-3h15L21 7M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18M9 11a3 3 0 006 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Produits</span>
+    </button>
+    <button class="nav-item" data-view="sales">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19v-7M20 19V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>Ventes</span>
+    </button>
+    <button class="nav-item" data-view="benefits">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8M21 7h-5M21 7v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Bénéfices</span>
+    </button>
+  </nav>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+<div class="modal-backdrop" id="productModal" hidden>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="productModalTitle">Ajouter un produit</h3>
+    <form id="productForm">
+      <label>Nom du produit
+        <input type="text" id="pName" required placeholder="Ex. Casque audio sans fil">
+      </label>
+      <div class="form-row">
+        <label>Prix d'achat du carton (FG)
+          <input type="number" id="pCartonPrice" min="0" step="1" required placeholder="0">
+        </label>
+        <label>Quantité par carton
+          <input type="number" id="pPerCarton" min="0" step="1" required placeholder="Ex. 12">
+        </label>
+      </div>
+      <p class="computed-hint" id="unitCostHint">Coût unitaire : —</p>
+      <div class="form-row">
+        <label>Nombre de cartons
+          <input type="number" id="pCartons" min="0" step="1" placeholder="Ex. 5">
+        </label>
+        <label>Quantité totale
+          <input type="number" id="pQty" min="0" step="1" required placeholder="0">
+        </label>
+      </div>
+      <p class="modal-hint modal-hint-tight">La quantité totale se calcule automatiquement à partir des cartons, ou saisissez-la directement. Le prix de vente n'est pas fixe : il se saisit à chaque vente.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="deleteProductBtn" hidden>Supprimer</button>
+        <button type="button" class="btn btn-ghost" id="productCancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="productSubmitBtn">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SELL MODAL -->
+<div class="modal-backdrop" id="sellModal" hidden>
+  <div class="modal modal-sm">
+    <div class="modal-handle"></div>
+    <h3>Vendre <span id="sellProductName"></span></h3>
+    <p class="modal-hint"><span id="sellAvailable"></span> unité(s) disponible(s) · coût d'achat <span id="sellCost"></span> / unité</p>
+    <div class="form-row">
+      <label>Quantité vendue
+        <input type="number" id="sellQty" min="1" value="1" class="center-input">
+      </label>
+      <label>Prix de vente (par unité, FG)
+        <input type="number" id="sellPriceInput" min="0" step="1" class="center-input" placeholder="0">
+      </label>
+    </div>
+    <p class="computed-hint" id="sellTotalHint">Total : — · Bénéfice : —</p>
+    <p class="modal-error" id="sellError" hidden>Veuillez saisir une quantité et un prix de vente valides.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="sellCancel">Annuler</button>
+      <button class="btn btn-primary" id="sellConfirm">Confirmer la vente</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
